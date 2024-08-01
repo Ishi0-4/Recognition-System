@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Times New Roman', Times, serif;
+}
+body{
+  color: #fff;
+}
+#background-video {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+}
+.container{
+  width: 100%;
+  height: 100vh;
+  background-position: center;
+  background-size: cover;
+  padding-top: 35px;
+  padding-left: 8%;
+  padding-right: 8%;
+}
+nav{
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo a{
+  font-size: 70px;
+  text-decoration: none;
+}
+span{
+  color: #f9004d;
+}
+nav ul li{
+  display: inline-block;
+  list-style: none;
+  margin: 10px 15px;
+}
+nav ul li a{
+  text-decoration: none;
+  transition: 0.5s;
+}
+nav ul li a:hover{
+  color: #f9004d;
+}
+.login{
+  text-decoration: none;
+  margin-right: 15px;
+  font-size: 18px;
+}
+.btn{
+  background: #000;
+  border-radius: 6px;
+  padding: 9px 25px;
+  text-decoration: none;
+  transition: 0.5s;
+  font-size: 18px;
+}
+
+.content{
+  margin-top: 10%;
+  max-width: 600px;
+}
+.content h2{
+  font-size: 60px
+}
+.content p{
+  margin-top: 20px;
+  line-height: 25px;
+  font-size: 20px
+}
+a{
+  color: #fff;
+}
+.link {
+  margin-top: 30px;
+}
+.start{
+  color: #000;
+  text-decoration: none;
+  background: #fff;
+  padding: 9px 25px;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: 0.5s;
+}
+.link .start:hover{
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}

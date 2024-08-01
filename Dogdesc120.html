@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Model</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins&family=Rhodium+Libre&display=swap"
+        rel="stylesheet"
+    />
+    <style>
+        * {
+            font-family: "Times New Roman", Times, serif;
+            font-weight: 400;
+            font-style: normal;
+            margin: 0;
+            padding: 0;
+        }
+        #drop-container {
+            border: 2px dashed #1c274c;
+            padding: 20px;
+            text-align: center;
+            width: 60%;
+            margin-inline: auto;
+            height: 30%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .start-button, .reset-button {
+            background-color: lightgreen;
+            color: black;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 60%;
+            margin-inline: auto;
+            display: block;
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        #drop-container svg {
+            fill: black;
+            width: 64px;
+            height: 64px;
+            margin-top: 10px;
+        }
+        #label-container {
+            margin-bottom: 20px;
+            display: flex;
+            height: 60%;
+            width: 80%;
+            gap: 2%;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #result-table{
+            overflow-y:scroll ;
+            scrollbar-width: none;
+        }
+        #dog-description{
+                        overflow-y: scroll;
+scrollbar-width: none;
+        }
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .main-container {
+            font-size: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            overflow: scroll;
+            width: 100%;
+            height: 100vh;
+            background-image: url(2.jpg);
+            background-position: center;
+            background-size: cover;
+            padding-top: 35px;
+            padding-left: 0%;
+            padding-right: 0%;
+        }
+        .heading {
+            font-weight: 100px;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-size: 30px;
+        }
+        #svg {
+            height: 60%;
+        }
+        #selected-image {
+            height: 60%;
+        }
+        #selected-image img {
+            height: 100%;
+            width: 100%;
+            animation: rotate 1s linear infinite;
+        }
+        a{
+         color: #fff; 
+        }
+        .link {
+        margin-top: 30px;
+        }
+        .back{
+        color: #000;
+        text-decoration: none;
+        background: #fff;
+        padding: 9px 25px;
+        font-weight: bold;
+        border-radius: 6px;
+        transition: 0.5s;
+        position: relative;
+        }
+        .link .back:hover{
+        background: red;
+        border: 1px solid #fff;
+        color: #fff;
+        }
+        @keyframes rotate {
+            0% {
+                filter: hue-rotate(160deg);
+            }
+            100% {
+                filter: hue-rotate(24deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="heading">DoG.AI</div>
+
+    <div id="drop-container">
+        <p id="drop-image-text">Choose Image</p>
+        <input type="file" id="image-upload" accept="image/*" onchange="loadImage(event)" style="display:none;">
+        <button class="start-button" onclick="document.getElementById('image-upload').click()">Upload Image</button>
+        <button class="reset-button" style="display:none;" onclick="resetInput()">Reset</button>
+        <p id="svg">
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                height="50"
+            >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path
+                        opacity="0.5"
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M3 14.25C3.41421 14.25 3.75 14.5858 3.75 15C3.75 16.4354 3.75159 17.4365 3.85315 18.1919C3.9518 18.9257 4.13225 19.3142 4.40901 19.591C4.68577 19.8678 5.07435 20.0482 5.80812 20.1469C6.56347 20.2484 7.56459 20.25 9 20.25H15C16.4354 20.25 17.4365 20.2484 18.1919 20.1469C18.9257 20.0482 19.3142 19.8678 19.591 19.591C19.8678 19.3142 20.0482 18.9257 20.1469 18.1919C20.2484 17.4365 20.25 16.4354 20.25 15C20.25 14.5858 20.5858 14.25 21 14.25C21.4142 14.25 21.75 14.5858 21.75 15V15.0549C21.75 16.4225 21.75 17.5248 21.6335 18.3918C21.5125 19.2919 21.2536 20.0497 20.6517 20.6516C20.0497 21.2536 19.2919 21.5125 18.3918 21.6335C17.5248 21.75 16.4225 21.75 15.0549 21.75H8.94513C7.57754 21.75 6.47522 21.75 5.60825 21.6335C4.70814 21.5125 3.95027 21.2536 3.34835 20.6517C2.74643 20.0497 2.48754 19.2919 2.36652 18.3918C2.24996 17.5248 2.24998 16.4225 2.25 15.0549C2.25 15.0366 2.25 15.0183 2.25 15C2.25 14.5858 2.58579 14.25 3 14.25Z"
+                        fill="#1C274C"
+                    ></path>
+                    <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M12 2.25C12.2106 2.25 12.4114 2.33852 12.5535 2.49392L16.5535 6.86892C16.833 7.17462 16.8118 7.64902 16.5061 7.92852C16.2004 8.20802 15.726 8.18678 15.4465 7.88108L12.75 4.9318V16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16V4.9318L8.55353 7.88108C8.27403 8.18678 7.79963 8.20802 7.49393 7.92852C7.18823 7.64902 7.16698 7.17462 7.44648 6.86892L11.4465 2.49392C11.5886 2.33852 11.7894 2.25 12 2.25Z"
+                        fill="#1C274C"
+                    ></path>
+                </g>
+            </svg>
+        </p>
+        <p id="selected-image"></p>
+    </div>
+
+    <div id="label-container">
+        <table id="result-table"></table>
+        <div class="" id="dog-description"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<script type="text/javascript">
+    const URL = "https://teachablemachine.withgoogle.com/models/i4-1pbw4A/";
+
+    let labelContainer, maxPredictions, model;
+
+// const dogBreeds = [
+//   {
+//     dog_name: "German_Shepherd",
+//     description: "The German Shepherd, also known in Britain as an Alsatian, is a German breed of working dog of medium to large size. The breed was developed by Max von Stephanitz using various traditional German herding dogs from 1899. It was originally bred as a herding dog, for herding sheep."
+//  " },
+//   {
+//     dog_name: "Akita",
+//     description: "The Akita is a Japanese dog breed of large size. Originating from the mountains of northern Japan, the Akita has a short double coat similar to that of many other northern spitz breeds. Historically, they were used by matagi for guarding and the hunting of bears."
+//  " },
+//   {
+//     dog_name: "Australian Shepherd",
+//     description: "The Australian Shepherd is a medium-sized herding breed from the United States known for their colorful coats, intelligence, and friendly personality. Although the breed originated in the United States, their name reflects their ancestral roots traced back to Europe via Australia."
+//  " },
+//   {
+//     dog_name: "Collie",
+//     description: "Collies form a distinctive type of herding dogs, including many related landraces and standardized breeds. The type originated in Scotland and Northern England. Collies are medium-sized, fairly lightly-built dogs, with pointed snouts. Many types have a distinctive white color over the shoulders."
+//  " },
+//   {
+//     dog_name: "Chow-Chow",
+//     description: "The Chow Chow is a spitz-type of dog breed originally from Northern China. The Chow Chow is a sturdily built dog, square in profile, with a broad skull and small, triangular, erect ears with rounded tips. The breed is known for a very dense double coat that is either smooth or rough."
+//  " },
+//   {
+//     dog_name: "Basenji",
+//     description: "The Basenji is a breed of hunting dog. It was bred from stock that originated in central Africa. The Fédération Cynologique Internationale places the breed in the Spitz and primitive types. The Basenji produces an unusual yodel-like sound, due to its unusually shaped larynx."
+//  " },
+//   {
+//     dog_name: "Belgian Malinois",
+//     description: "The Belgian Shepherd, also known as the Belgian Sheepdog or the Chien de Berger Belge, is a Belgian breed of herding dog of medium size. It is bred in four distinct varieties based on coat type and colour: the long-haired black Groenendael; the rough-haired fawn Laekenois; the short-haired fawn Malinois, and the long-haired fawn Tervuren. The American Kennel Club considers the four varieties to be separate breeds."
+//  " },
+//   {
+//     dog_name: "Doberman Pinscher",
+//     description: "The Dobermann is a German breed of medium-large domestic dog of pinscher type. It was originally bred in Thuringia in about 1890 by Louis Dobermann, a tax collector. It has a long muzzle and – ideally – an even and graceful gait."
+//  " },
+//   {
+//     dog_name: "Siberian Husky",
+//     description: "The Siberian Husky is a medium-sized working sled dog breed. The breed belongs to the Spitz genetic family. It is recognizable by its thickly furred double coat, erect triangular ears, and distinctive markings, and is smaller than the similar-looking Alaskan Malamute."
+//  " },
+//   {
+//     dog_name: "Wolf",
+//     description: "The wolf, also known as the gray wolf or grey wolf, is a large canine native to Eurasia and North America. More than thirty subspecies of Canis lupus have been recognized, including the dog and dingo, though gray wolves, as popularly understood, only comprise naturally-occurring wild subspecies."
+//   }
+// ];
+
+
+    // Load the image model
+    
+    
+const dogBreeds = [
+{
+dog_name: "German_shepherd",
+ description: "The German Shepherd, also known in Britain as an Alsatian, is a German breed of working dog of medium to large size. The breed was developed by Max von Stephanitz using various traditional German herding dogs from 1899. It was originally bred as a herding dog, for herding sheep."  ,
+link: "https://en.wikipedia.org/wiki/German_Shepherd " 
+},
+{
+dog_name: "Akita",
+description: "The Akita is a Japanese dog breed of large size. Originating from the mountains of northern Japan, the Akita has a short double coat similar to that of many other northern spitz breeds. Historically, they were used by matagi for guarding and the hunting of bears.",
+link: "https://en.wikipedia.org/wiki/Akita_(dog_breed) " },
+ {
+ dog_name: "Australian shepherd",
+ description: "The Australian Shepherd is a medium-sized herding breed from the United States known for their colorful coats, intelligence, and friendly personality. Although the breed originated in the United States, their name reflects their ancestral roots traced back to Europe via Australia.",
+link: "https://en.wikipedia.org/wiki/Australian_Shepherd " },
+{
+ dog_name: "Collie",
+ description: "Collies form a distinctive type of herding dogs, including many related landraces and standardized breeds. The type originated in Scotland and Northern England. Collies are medium-sized, fairly lightly-built dogs, with pointed snouts. Many types have a distinctive white color over the shoulders.",
+link: "https://en.wikipedia.org/wiki/Collie " },
+ {
+ dog_name: "Chow",
+ description: "The Chow Chow is a spitz-type of dog breed originally from Northern China. The Chow Chow is a sturdily built dog, square in profile, with a broad skull and small, triangular, erect ears with rounded tips. The breed is known for a very dense double coat that is either smooth or rough.",
+link:"https://en.wikipedia.org/wiki/Chow_Chow " },
+{
+ dog_name: "Basenji",
+ description: "The Basenji is a breed of hunting dog. It was bred from stock that originated in central Africa. The Fédération Cynologique Internationale places the breed in the Spitz and primitive types. The Basenji produces an unusual yodel-like sound, due to its unusually shaped larynx.",
+link: "https://en.wikipedia.org/wiki/Basenji " },
+{
+ dog_name: " Belgian Melenois ",
+ description: "The Belgian Shepherd, also known as the Belgian Sheepdog or the Chien de Berger Belge, is a Belgian breed of herding dog of medium size. It is bred in four distinct varieties based on coat type and colour: the long-haired black Groenendael; the rough-haired fawn Laekenois; the short-haired fawn Malinois, and the long-haired fawn Tervuren. The American Kennel Club considers the four varieties to be separate breeds.",
+link: "https://en.wikipedia.org/wiki/Belgian_Shepherd " },
+{
+dog_name: "Doberman",
+ description: "The Dobermann is a German breed of medium-large domestic dog of pinscher type. It was originally bred in Thuringia in about 1890 by Louis Dobermann, a tax collector. It has a long muzzle and – ideally – an even and graceful gait.",
+link:"https://en.wikipedia.org/wiki/Dobermann " },
+{
+ dog_name: "Siberian_husky",
+ description: "The Siberian Husky is a medium-sized working sled dog breed. The breed belongs to the Spitz genetic family. It is recognizable by its thickly furred double coat, erect triangular ears, and distinctive markings, and is smaller than the similar-looking Alaskan Malamute.",
+link:"https://en.wikipedia.org/wiki/Siberian_Husky " },
+{
+dog_name: "Wolf",
+description: "The wolf, also known as the gray wolf or grey wolf, is a large canine native to Eurasia and North America. More than thirty subspecies of Canis lupus have been recognized, including the dog and dingo, though gray wolves, as popularly understood, only comprise naturally-occurring wild subspecies.",
+link: "https://en.wikipedia.org/wiki/Wolfdog " },
+{
+dog_name: "Malinois",
+description: " The Belgian Malinois excels not only in herding, but also in protection and law enforcement drug, bomb, and gas detection search and rescue tracking obedience sledding agility and therapy assistance to disabled, ill or elderly people. This dog is demanding and needs an experienced owner. A wide range is seen in temperament and aggressiveness. They want nothing more than to be with their family, which makes them unsuitable as a kennel dog." ,
+link:"https://www.hillspet.com/dog-care/dog-breeds/belgian-malinois"
+},
+{
+dog_name: " Dingo  ",
+    description: " The dingo (either included in the species Canis familiaris, or considered one of the following independent taxa: Canis familiaris dingo, Canis dingo, or Canis lupus dingo) is an ancient (basal) species of Canid found in Australia. Its taxonomic classification is debated as indicated by the variety of scientific names presently applied in different publications. It is variously considered a form of domestic dog not warranting recognition as a subspecies, a subspecies of dog or wolf, or a full species in its own right ."
+, link: "https://en.wikipedia.org/wiki/Dingo"
+},
+{
+dog_name: " Dhole ",
+    description: " The dhole (/doʊl/ dohl;[2][3] Cuon alpinus) is a canid native to Central, South, East and Southeast Asia. It is genetically close to species within the genus Canis,[4]: Fig. 10  but distinct in several anatomical aspects: its skull is convex rather than concave in profile, it lacks a third lower molar[5] and the upper molars possess only a single cusp as opposed to between two and four.[6] During the Pleistocene, the dhole ranged throughout Asia, with its range also extending into Europe (with a single record also reported from North America) but became restricted to its historical range 12,000–18,000 years ago. ",
+link: "https://en.wikipedia.org/wiki/Dhole"
+},
+{
+dog_name: "  Kelpie ",
+    description: " The Australian Kelpie, or simply Kelpie, is an Australian sheepdog capable of mustering and droving with little or no guidance. It is a medium-sized dog and comes in a variety of colours. The Kelpie has been exported throughout the world and is used to muster livestock, primarily sheep, cattle and goats. .",
+link: "https://en.wikipedia.org/wiki/Australian_Kelpie"
+},
+{
+dog_name: " Norwegian Elkhound  ",
+    description: " The Norwegian Elkhound is one of the Northern Spitz-type breeds of dog and is the National Dog of Norway. The Elkhound has served as a hunter, guardian, herder, and defender. It is known for its courage in tracking and hunting elk and other large game, such as bears or wolves.[1][2] The Norwegian Elkhound was first presented at a dog exhibition in Norway in 1877. " ,
+link: "https://en.wikipedia.org/wiki/Norwegian_Elkhound"
+},
+
+{
+dog_name: " Schipperke  ",
+    description: " A Schipperke is a small breed of dog that is believed to have originated in the 1600s in Flanders. There has been a long informal debate over whether this type of dog is a spitz or miniature sheepdog. In their home country of Belgium they are considered a small shepherd." ,
+link: "https://en.wikipedia.org/wiki/Schipperke"
+},
+{
+dog_name: "  American_Staffordshire_Terrier ",
+    description: " The American Staffordshire Terrier, also known as the AmStaff, is a medium-sized, short-coated American dog breed recognized by the American Kennel Club, but not the United Kennel Club, which instead allows American Staffordshire Terriers to be registered under the American Pit Bull Terrier breed. ",
+link: "https://en.wikipedia.org/wiki/American_Staffordshire_Terrier"
+},
+{
+dog_name: "  Eskimo_dog ",
+    description: " The American Eskimo Dog is a breed of companion dog, originating in Germany. The American Eskimo Dog is a member of the Spitz family. The breed's progenitors were German Spitz, but due to anti-German sentiment during the First World War, it was renamed 'American Eskimo Dog.''.",
+link: "https://en.wikipedia.org/wiki/American_Eskimo_Dog "
+},
+{
+dog_name: " Labrador_retriever  ",
+    description: " The Labrador Retriever or simply Labrador is a British breed of retriever gun dog. It was developed in the United Kingdom from St. John's water dogs imported from the colony of Newfoundland, and was named after the Labrador region of that colony. ",
+link: "https://en.wikipedia.org/wiki/Labrador_Retriever"
+},
+{
+dog_name: " Groenendael ",
+    description: " Known for their beautiful long black coat, Belgian Sheepdogs are part of the Belgian Shepherd family, which also includes the Belgian Tervuren, the Belgian Laekenois, and the Belgian Malinois. Belgian Sheepdogs, sometimes referred to as Groenendael, can trace their roots back to the 19th century in Belgium, where they were used for herding and guarding purposes.",
+link:  "https://www.petmd.com/dog/breeds/belgian-sheepdog "
+},
+{
+dog_name: " Mexican_Hairless ",
+    description: " The Xoloitzcuintle is one of several breeds of hairless dog. It is found in standard, intermediate, and miniature sizes. The Xolo also comes in a coated variety, totally covered in fur. Coated and hairless can be born in the same litter as a result of the same combination of genes. " ,
+link: "https://en.wikipedia.org/wiki/Xoloitzcuintle"
+},
+{
+dog_name: "  Border_terrier ",
+    description: " The Border Terrier is a British breed of small, rough-coated terrier. It originates from the area of the Anglo-Scottish border, and shares ancestry with the Dandie Dinmont Terrier and the Bedlington Terrier from the same area. .",
+link: "https://en.wikipedia.org/wiki/Border_Terrie "
+},
+{
+dog_name: " Norwich_terrier ",
+    description: " The Norwich Terrier is a breed of dog originating in England, and was bred to hunt small rodents. One of the smallest terriers, these dogs are relatively rare. Their drop-eared variety is the Norfolk Terrier. ",
+link: "https://en.wikipedia.org/wiki/Norwich_Terrier"
+},
+{
+dog_name: " Curly-coated_retriever ",
+    description: " The Curly-coated Retriever is a breed of dog originally bred in England for upland bird and waterfowl hunting. It is the tallest of the retrievers and is easily distinguishable by the mass of tight curls covering its body.." ,
+link: "https://en.wikipedia.org/wiki/Curly-coated_Retriever"
+},
+{
+dog_name: " Kerry_blue_terrier ",
+    description: " The Kerry Blue Terrier is a breed of dog. Originally bred to control vermin including rats, rabbits, badgers, ferrets, foxes, otters, hares, deer, and even wolves, over time the Kerry became a general working dog used for a variety of jobs including herding cattle and sheep. ",
+link: "https://en.wikipedia.org/wiki/Kerry_Blue_Terrier"
+},
+{ 
+dog_name: " African_Hunting_Dog  ",
+    description: " The African wild dog, also known as the painted dog or Cape hunting dog, is a wild canine native to sub-Saharan Africa.." ,
+link: "https://en.wikipedia.org/wiki/African_wild_dog"
+},
+{
+dog_name: " Scottish Deerhound ",
+    description: " The Scottish Deerhound, or simply the Deerhound, is a breed of large sighthound, once bred to hunt the red deer by coursing. In outward appearance it is similar to the Greyhound, but larger and more heavily boned, with a rough coat. ",
+link: "https://en.wikipedia.org/wiki/Scottish_Deerhound"
+},
+{
+dog_name: " Toy_Terrier ",
+    description: " The Toy Fox Terrier is a small terrier breed of dog, directly descended from the larger Smooth Fox Terrier but since 1936, it has been registered in the USA with the UKC as a separate breed.." ,
+link: "https://en.wikipedia.org/wiki/Toy_Fox_Terrier"
+},
+{
+dog_name: " Miniature_pinscher ",
+
+    description: " The Miniature Pinscher, also known as the Zwergpinscher and Mini Pin, is a small breed of dog of the pinscher type originating in Germany. ",
+link: "https://en.wikipedia.org/wiki/Miniature_Pinscher"
+},
+{
+dog_name: " Irish_terrier ",
+    description: " The Irish Terrier is a dog breed from Ireland, one of many breeds of terrier. The Irish Terrier is considered one of the oldest terrier breeds. The Dublin dog show in 1873 was the first to provide a separate class for Irish Terriers.." ,
+link: "https://en.wikipedia.org/wiki/Irish_Terrier"
+},
+{
+dog_name: " Saluki ",
+    description: " The Saluki is a standardised breed developed from sighthounds – dogs that hunt primarily by sight rather than strong scent – that was once used by nomadic tribes to run down game animals. The dog was originally bred in the Fertile Crescent. ",
+link: "https://en.wikipedia.org/wiki/Saluki"
+},
+{
+dog_name: " Australian_terrier    ",
+    description: " The Australian Terrier is a small breed of dog of the terrier type. The breed was developed in Australia, although the ancestral types of dogs from which the breed descends were from Great Britain." ,
+link: "https://en.wikipedia.org/wiki/Australian_Terrier"
+},
+{
+dog_name: " Chesapeake_Bay_retriever ",
+    description: " The Chesapeake Bay Retriever is a large breed of dog belonging to the retriever, gundog, and sporting breed groups. The breed was developed in the United States Chesapeake Bay area during the 19th century. ",
+link: "https://en.wikipedia.org/wiki/Chesapeake_Bay_Retriever"
+},
+{
+dog_name: " Scotch_terrier ",
+    description: " The Scottish Terrier (Scottish Gaelic: Abhag Albannach; also known as the Aberdeen Terrier), popularly called the Scottie, is a breed of dog. Initially one of the highland breeds of terrier that were grouped under the name of Skye Terrier, it is one of five breeds of terrier that originated in Scotland, the other four being the modern Skye, Cairn, Dandie Dinmont, and West Highland White terriers. They are an independent and rugged breed with a wiry outer coat and a soft dense undercoat. The first Earl of Dumbarton nicknamed the breed 'the diehard'. According to legend, the Earl of Dumbarton gave this nickname because of the Scottish Terriers' bravery, and Scotties were also the inspiration for the name of his regiment, The Royal Scots, Dumbarton’s Diehard.[1] Scottish Terriers were originally bred to hunt vermin on farms." ,
+link: "https://en.wikipedia.org/wiki/Scottish_Terrier"
+},
+{
+dog_name: " Kneeshond ",
+    description: " The Keeshond is a medium-sized dog with a plush, two-layer coat of silver and black fur with a ruff and a curled tail. Their closest relatives are the German spitzes such as the Großspitz, Mittelspitz, Kleinspitz, Zwergspitz or Pomeranian. ",
+link: "https://en.wikipedia.org/wiki/Keeshond"
+},
+{
+dog_name: "  Irish Wolfhound ",
+    description: " The Irish Wolfhound is a breed of large sighthound that has, by its presence and substantial size, inspired literature, poetry and mythology. One of the largest of all breeds of dog, the breed is used by coursing hunters who have prized it for its ability to dispatch game caught by other, swifter sighthounds. ",
+link: "https://en.wikipedia.org/wiki/Irish_Wolfhound "
+},
+{
+dog_name: "  Flat-coated_retriever ",
+    description: " The Flat-coated Retriever is a gun dog breed originating from England. It was developed as a retriever both on land and in the water ",
+link: "https://en.wikipedia.org/wiki/Flat-coated_Retriever"
+},
+
+{
+dog_name: " Lakeland_terrier  ",
+    description: " The Lakeland Terrier is a dog breed, which takes its name from its place of origin, the Lake District in England. The dog is a small to mid-size member of the Terrier family. While independent in personality, it interacts well with owners and all family members, and is mostly hypo-allergenic. ",
+link: "https://en.wikipedia.org/wiki/Lakeland_Terrier "
+},
+{
+dog_name: " Leonberg ",
+    description: " The Leonberger is a giant dog breed, whose name derives from the city of Leonberg in Baden-Württemberg, Germany. ",
+link: "https://en.wikipedia.org/wiki/Leonberger"
+},
+{
+dog_name: " Chihuahua  ",
+    description: " The Chihuahua is a Mexican breed of toy dog. It is named for the Mexican state of Chihuahua and is among the smallest of all dog breeds. It is usually kept as a companion animal or for showing.",
+link: "https://en.wikipedia.org/wiki/Chihuahua_(dog_breed) "
+},
+{
+dog_name: " Airedale ",
+    description: " The Airedale Terrier, also called Bingley Terrier and Waterside Terrier, is a dog breed of the terrier type that originated in the valley of the River Aire, in the West Riding of Yorkshire, England. It is traditionally called the 'King of Terriers' because it is the largest of the terrier breeds. ",
+link: "https://en.wikipedia.org/wiki/Airedale_Terrier"
+},
+{
+dog_name: " Brabancon_Griffon ",
+    description: " The Griffon Bruxellois or Brussels Griffon is a breed of toy dog, named for their city of origin of Brussels, Belgium. The Griffon Bruxellois may refer to three different breeds, the Griffon Bruxellois, the Griffon Belge and the Petit Brabançon ",
+link: "https://en.wikipedia.org/wiki/Griffon_Bruxellois "
+},
+{
+dog_name: " Ibizan Hound ",
+    description: " The Ibizan Hound is a lean, agile dog of the hound family. There are two hair types of the breed: smooth and wire. The more commonly seen type is the smooth. Some consider there to be a third type, long, but the longhair is most likely a variation of the wire ",
+link: "https://en.wikipedia.org/wiki/Ibizan_Hound"
+},
+{
+dog_name: "  Staffordshire_Bullterrier ",
+    description: " The Staffordshire Bull Terrier, also called the Staffy or Stafford, is a purebred dog of small to medium size in the terrier group that originated in the northern parts of Birmingham and in the Black Country of Staffordshire, for which it is named. ",
+link: "https://en.wikipedia.org/wiki/Staffordshire_Bull_Terrier "
+},
+{
+dog_name: " Golden_retriever ",
+    description: " The Golden Retriever is a Scottish breed of retriever dog of medium size. It is characterised by a gentle and affectionate nature and a striking golden coat. It is commonly kept as a pet and is among the most frequently registered breeds in several Western countries. ",
+link: "https://en.wikipedia.org/wiki/Golden_Retriever"
+},
+{
+dog_name: " Pembroke ",
+    description: " The Pembroke Welsh Corgi is a cattle herding dog breed that originated in Pembrokeshire, Wales. It is one of two breeds known as a Welsh Corgi, the other being the Cardigan Welsh Corgi. Pembroke Welsh Corgis descended from the Spitz family of dogs. ",
+link: "https://en.wikipedia.org/wiki/Pembroke_Welsh_Corgi "
+},
+{
+dog_name: " Pomeranian ",
+    description: " The Pomeranian is a breed of dog of the Spitz type that is named for the Pomerania region in north-west Poland and north-east Germany in Central Europe. Classed as a toy dog breed because of its small size, the Pomeranian is descended from larger Spitz-type dogs, specifically the German Spitz. ",
+link: "https://en.wikipedia.org/wiki/Pomeranian_dog"
+},
+{
+dog_name: " Italian Greyhound  ",
+    description: " The Italian Greyhound or Italian Sighthound is an Italian breed of small sighthound. It was bred to hunt hare and rabbit, but is kept mostly as a companion dog. ",
+link: "https://en.wikipedia.org/wiki/Italian_Greyhound "
+},
+{
+dog_name: " Shetland_Sheepdog ",
+    description: " The Shetland Sheepdog, also known as the Sheltie, is a breed of herding dog that originated in the Shetland Islands of Scotland. It was formally recognized by The Kennel Club in 1909. ",
+link: "https://en.wikipedia.org/wiki/Shetland_Sheepdog"
+},
+{
+dog_name: "  Whippet ",
+    description: " The whippet is a British breed of medium-sized dog, of the sighthound type, related to the larger greyhound and the smaller Italian greyhound. Apart from the differences in height, the whippet closely resembles these two breeds; it has sometimes been described as 'the poor man's greyhound' .",
+link: "https://en.wikipedia.org/wiki/Whippet"
+},
+{
+dog_name: " Rhodesian_Ridgeback  ",
+    description: " The Rhodesian Ridgeback is a large dog breed originally bred in Southern Africa. The original breed standard was drafted by F.R. Barnes, in Bulawayo, Southern Rhodesia, in 1922, and approved by the South African Kennel Union in 1927. Its forebears can be traced to the ridged hunting and guardian dogs of the Khoikhoi. ",
+link: "https://en.wikipedia.org/wiki/Rhodesian_Ridgeback"
+},
+{
+dog_name: " Borzoi ",
+    description: " The Borzoi or Russian Hunting Sighthound is a Russian breed of hunting dog of sighthound type. It was formerly used for wolf hunting, and until 1936 was known as the Russian Wolfhound.",
+link: "https://en.wikipedia.org/wiki/Borzoi "
+},
+{
+dog_name: " Giant_schnauzer ",
+    description: " The Giant Schnauzer is a breed of dog developed in the 17th century in Germany. It is the largest of the three breeds of Schnauzer—the other two breeds being the Standard Schnauzer and the Miniature Schnauzer. ",
+link: "https://en.wikipedia.org/wiki/Giant_Schnauzer"
+},
+{
+dog_name: " Cardigan ",
+    description: " The Cardigan Welsh corgi is one of two different varieties of livestock-herding dog breeds known as Welsh corgis, with the other being the Pembroke Welsh corgi. It is one of the oldest breeds of the British Isles. ",
+link:  "https://en.wikipedia.org/wiki/Cardigan_Welsh_Corgi"
+},
+{
+dog_name: "  Norfolk_terrier ",
+    description: " The Norfolk Terrier is a British breed of dog. Prior to gaining recognition as an independent breed in 1964, it was a variety of the Norwich Terrier, distinguished from the 'prick eared' Norwich by its 'drop ears'. Together, the Norfolk and Norwich Terriers are the smallest of the working terriers. ",
+link: "https://en.wikipedia.org/wiki/Norfolk_Terrier"
+},
+{
+dog_name: "  Redbone ",
+    description: " The Redbone Coonhound is an American breed of hunting dog. As a coonhound, the Redbone is primarily a hunter of small game that hide in trees, such as raccoons, opossums, and squirrels, but is also capable of handling big game like bears and cougars.",
+link: "https://en.wikipedia.org/wiki/Redbone_Coonhound "
+},
+{
+dog_name: " Vizsla ",
+    description: " The Vizsla, also known as Hungarian Vizsla, Magyar Vizsla or Hungarian Pointer, is a dog breed from Hungary and belongs to the Fédération Cynologique Internationale group 7, the Canadian Kennel Club group 1, and the American Kennel Club. ",
+link: "https://en.wikipedia.org/wiki/Vizsla"
+},
+{
+dog_name: " Newfoundland ",
+    description: " The Newfoundland is a large breed of working dog. They can be black, grey, brown, or black and white. However, in the Dominion of Newfoundland, before it became part of the confederation of Canada, only black and Landseer coloured dogs were considered to be proper members of the breed." ,
+link: "https://en.wikipedia.org/wiki/Newfoundland_dog"
+},
+{
+dog_name: " Weimaraner ",
+    description: " The Weimaraner is a German breed of hunting dog of medium to large size, with history going back at least to the nineteenth century. It originated in the area of the city of Weimar, for which it is named. It was recognised as a breed in 1891 ",
+link: "https://en.wikipedia.org/wiki/Weimaraner"
+},
+
+{
+dog_name: "  Cairn ",
+    description: " The Cairn Terrier is a terrier breed originating in the Scottish Highlands and recognised as one of Scotland's earliest working dogs. The name “Cairn Terrier” was a compromise suggestion when the breed was brought to official shows in the United Kingdom in 1909, initially under the name “Short-haired Skye terrier” .",
+link: "https://en.wikipedia.org/wiki/Cairn_Terrier "
+},
+{
+dog_name: " Silky_terrier  ",
+    description: " The Australian Silky Terrier or simply Silky Terrier is a small breed of dog of the terrier dog type. The breed was developed in Australia, although the ancestral types and breeds were from Great Britain. It is closely related to the Australian Terrier and the Yorkshire Terrier. ",
+link: "https://en.wikipedia.org/wiki/Australian_Silky_Terrier"
+},
+{
+dog_name: " Kuvasz ",
+    description: " The Kuvasz is a Hungarian breed of flock guardian dog. Mention of the breed can be found in old Hungarian texts. They have historically been royal guard dogs, or guarded livestock, but have been increasingly found in homes as pets over the last seventy years.",
+link: "https://en.wikipedia.org/wiki/Kuvasz "
+},
+{
+dog_name: " Cocker_spaniel ",
+    description: " Cocker Spaniels are dogs belonging to two breeds of the spaniel dog type: the American Cocker Spaniel and the English Cocker Spaniel, both of which are commonly called simply Cocker Spaniel in their countries of origin. In the early 20th century, Cocker Spaniels also included small hunting spaniels. ",
+link: "https://en.wikipedia.org/wiki/Cocker_Spaniel"
+},
+{
+dog_name: " Malamute  ",
+    description: " The Alaskan Malamute is a large breed of dog that was originally bred for its strength and endurance, to haul heavy freight as a sled dog, and as a hound. It is similar to other arctic breeds such as the husky, the spitz, the Greenland Dog, Canadian Eskimo Dog, the Siberian Husky, and the Samoyed..",
+link: "https://en.wikipedia.org/wiki/Alaskan_Malamute "
+},
+{
+dog_name: " Bluetick ",
+    description: " The Bluetick Coonhound is a breed of coonhound originating in the United States. The Bluetick Coonhound is known for its friendly personality, cold nose, and deep bawl mouth. It is most commonly used as a raccoon hunting dog, but is also kept as a pet. ",
+link: "https://en.wikipedia.org/wiki/Bluetick_Coonhound"
+},
+{
+dog_name: " Samoyed ",
+    description: " The Samoyed is a breed of medium-sized herding dogs with thick, white, double-layer coats. They are spitz-type dogs which take their name from the Samoyedic peoples of Siberia. Descending from the Nenets Herding Laika, they are domesticated animals that assist in herding, hunting, protection and sled-pulling.",
+link: "https://en.wikipedia.org/wiki/Samoyed_dog "
+},
+{
+dog_name: " Border_collie ",
+    description: " The Border Collie is a British breed of herding dog of the collie type of medium size. It originates in the region of the Anglo-Scottish border, and descends from the traditional sheepdogs once found all over the British Isles. It is kept mostly as a working sheep-herding dog or as a companion animal. ",
+link: "https://en.wikipedia.org/wiki/Border_Collie"
+},
+{
+dog_name: " Great_Dane ",
+    description: " The Great Dane is a German breed of large mastiff-sighthound, which descends from hunting dogs of the Middle Ages used to hunt bears, wild boar, and deer. They were also used as guardian dogs of German nobility. It is one of the two largest dog breeds in the world, along with the Irish Wolfhound..",
+link: "https://en.wikipedia.org/wiki/Great_Dane "
+},
+{
+dog_name: " Standard_schnauzer ",
+    description: " The Schnauzer or Mittelschnauzer is a German breed of dog in the Pinscher and Schnauzer group. It is characterised by an abundant bristly beard and whiskers, usually lighter than the coat. ",
+link: "https://en.wikipedia.org/wiki/Standard_Schnauzer"
+},
+{
+dog_name: " Pug ",
+    description: " The Pug is a breed of dog with the physically distinctive features of a wrinkly, short-muzzled face, and curled tail..",
+link: "https://en.wikipedia.org/wiki/Pug "
+},
+{
+dog_name: " Otterhound ",
+    description: " The Otterhound is an English dog breed. It is a scent hound and is currently recognised by the Kennel Club as a Vulnerable Native Breed with around 600 animals worldwide. ",
+link: "https://en.wikipedia.org/wiki/Otterhound"
+},
+{
+dog_name: " Rottweiler  ",
+    description: " The Rottweiler is a breed of domestic dog, regarded as medium-to-large or large. The dogs were known in German as Rottweiler Metzgerhund, meaning Rottweil butchers' dogs, because their main use was to herd livestock and pull carts laden with butchered meat to market ",
+link: "https://en.wikipedia.org/wiki/Rottweiler "
+},
+{
+dog_name: "  Wire-haired_fox_terrier ",
+    description: " The Wire Fox Terrier is a breed of dog, one of many terrier breeds. It is a fox terrier, and although it bears a resemblance to the Smooth Fox Terrier, they are believed to have been developed separately. It originates from England ",
+link: "https://en.wikipedia.org/wiki/Wire_Fox_Terrier"
+},
+{
+dog_name: " Beagle ",
+    description: " The beagle is a breed of small scent hound, similar in appearance to the much larger foxhound. The beagle was developed primarily for hunting hare, known as beagling. ",
+link: "https://en.wikipedia.org/wiki/Beagle "
+},
+{
+dog_name: " Bull_mastiff ",
+    description: " The Bullmastiff is an English breed of dog of mastiff type and large size, with a solid build and a short muzzle. It was developed as a guard dog in the nineteenth century by cross-breeding the English Mastiff with the now-extinct Old English Bulldog. It was recognised as a breed by The Kennel Club in 1924. ",
+link: "https://en.wikipedia.org/wiki/Bullmastiff"
+},
+{
+dog_name: "  West_Highland_white_terrier ",
+    description: " The West Highland White Terrier, commonly known as the Westie, is a breed of dog from Scotland with a distinctive white harsh coat with a somewhat soft white undercoat. It is a medium-sized terrier, although with longer legs than other Scottish breeds of terrier.",
+link: "https://en.wikipedia.org/wiki/West_Highland_White_Terrier "
+},
+{
+dog_name: " Komondor ",
+    description: " The Komondor, also known as the Hungarian sheepdog, is a large, white-coloured Hungarian breed of livestock guardian dog with a long, corded coat. Sometimes referred to as 'mop dogs' due to their appearance, the Komondors are a long-established dog breed commonly employed to guard livestock and other property. ",
+link: "https://en.wikipedia.org/wiki/Komondor"
+},
+{
+dog_name: " Yorkshire_terrier ",
+    description: " The Yorkshire Terrier, also known as a Yorkie, is a British breed of toy dog of terrier type. It is among the smallest of the terriers and indeed of all dog breeds, with a weight of no more than 3.2 kg. It originated in the nineteenth century in the English county of Yorkshire, after which it is named..",
+link: "https://en.wikipedia.org/wiki/Yorkshire_Terrier "
+},
+{
+dog_name: " French_bulldog ",
+    description: " The French Bulldog is a French breed of companion dog or toy dog. It appeared in Paris in the mid-nineteenth century, apparently the result of cross-breeding of Toy Bulldogs imported from England and local Parisian ratters ",
+link: "https://en.wikipedia.org/wiki/French_Bulldog"
+},
+{
+dog_name: "  Miniature_Poodle ",
+    description: " Miniature poodles are intelligent, athletic dogs who love companionship and are easy to get along with. Although they are occasionally characterized as a finicky breed, miniature poodles are wonderful family dogs thanks to their smarts, their eager-to-please attitude, and their gentle demeanor with kids and other pets. They're an easy breed to train, low-allergen, and low-odor, so they fit in well with most homes and families. Though their low-shedding curly coats have the benefit of being nearly hypoallergenic, they do require lots of care and grooming. If you have the time and resources to dedicate to these peaceful pups, they make loving and loyal companions.",
+link: "https://www.dailypaws.com/poodle-miniature-dog-breed-7492889 "
+},
+{
+dog_name: "  Gordon Setter ",
+    description: " The Gordon Setter is a Scottish large breed of dog, a member of the setter family that also includes both the better-known Irish Setter and the English Setter. Setter breeds are classified as members of either the Sporting or Gundog Group depending on the national kennel club or council. ",
+link: "https://en.wikipedia.org/wiki/Gordon_Setter"
+},
+
+{
+dog_name: " Coonhound ",
+    description: " A coonhound, colloquially a coon dog, is a type of scenthound, a member of the hound group. They are an American type of hunting dog developed for the hunting of raccoons and also for feral pigs, bobcats, cougars, and bears. There are six distinct breeds of coonhound.",
+link: "https://en.wikipedia.org/wiki/Coonhound "
+},
+{
+dog_name: " Irish Setter ",
+    description: " The Irish Setter is a setter, a breed of gundog, and family dog. The term Irish Setter is commonly used to encompass the show-bred dog recognised by the American Kennel Club as well as the field-bred Red Setter recognised by the Field Dog Stud Book. ",
+link: "https://en.wikipedia.org/wiki/Irish_Setter"
+},
+{
+dog_name: " Boxer ",
+    description: " The Boxer is a medium to large, short-haired dog breed of mastiff-type, developed in Germany. The coat is smooth and tight-fitting; colors are fawn or brindled, with or without white markings.",
+link: "https://en.wikipedia.org/wiki/Boxer_(dog_breed) "
+},
+{
+dog_name: "  Miniature_schnauzer ",
+    description: " The Miniature Schnauzer is a breed of small dog of the Schnauzer type that originated in Germany in the mid-to-late 19th century.  ",
+link: "https://en.wikipedia.org/wiki/Miniature_Schnauzer"
+},
+{
+dog_name: " Great_Pyrenees ",
+    description: " The Pyrenean Mountain Dog or Chien de Montagne des Pyrénées is a French breed of livestock guardian dog; in France it is commonly called the Patou.",
+link: "https://en.wikipedia.org/wiki/Pyrenean_Mountain_Dog "
+},
+{
+dog_name: "  Papillon ",
+    description: " The Papillon, also called the Continental Toy Spaniel, is a breed of dog, of the spaniel type. One of the oldest of the toy spaniels, it derives its name from its characteristic butterfly-like look of the long and fringed hair on the ears. A Papillon with dropped ears is called a Phalene. ",
+link: "https://en.wikipedia.org/wiki/Papillon_dog"
+},
+{
+dog_name: " Tibetan_mastiff ",
+    description: " The Tibetan Mastiff is a large Tibetan dog breed. Its double coat is medium to long, subject to climate, and found in a wide variety of colors, including solid black, black and tan, various shades of red and bluish-gray, and sometimes with white markings around its neck, chest and legs.",
+link: "https://en.wikipedia.org/wiki/Tibetan_Mastiff "
+},
+{
+dog_name: " Standard_Poodle ",
+    description: " Forget the stuffy, stuck-up poodles of pop culture—in actuality, these pooches are athletic, intelligent, friendly dogs with so much to offer. The poodle's bright demeanor and people-pleasing nature make him an excellent pal for humans and a peacekeeper among other pets. Standard poodles are the most athletic and agile of all the poodle types, and they take quickly to training. Poodles also have the privilege of being low odor and among the least-shedding of all coated dogs. ",
+link: "https://www.dailypaws.com/standard-poodle-dog-breed-7493494"
+},
+{
+dog_name: "Clumber  ",
+    description: " The Clumber Spaniel is a breed of dog of the spaniel type, developed in the United Kingdom. It is the largest of the spaniels, and comes in predominantly white with either lemon or orange markings. The name of the breed is taken from Clumber Park in Nottinghamshire where the breed was first developed. ",
+link: "https://en.wikipedia.org/wiki/Clumber_Spaniel "
+},
+{
+dog_name: " Afghan_Hound ",
+    description: " The Afghan Hound is a hound distinguished by its thick, fine, silky coat, and a tail with a ring curl at the end. The breed originates in the cold mountains of Afghanistan. Its local name is Sag-e Tāzī or Tāžī Spay. Other names for this breed are Tāzī, Balkh Hound, Baluchi Hound, and Barakzai Hound. ",
+link: "https://en.wikipedia.org/wiki/Afghan_Hound"
+},
+{
+dog_name: " Irish_water_spaniel ",
+    description: " The Irish Water Spaniel is a sturdy, cobby dog native to Ireland. The coat, consisting of dense curls, sheds very little.[1] (see Moult) The colour is liver/puce and has a very definite purple hue unlike the colour of any other known breed.[citation needed] The non-shedding characteristic of the coat means that people usually allergic to dogs might have less of an allergic reaction to Irish Water Spaniels (see hypoallergenic).",
+link: "https://en.wikipedia.org/wiki/Irish_Water_Spaniel "
+},
+{
+dog_name: " EntleBucher  ",
+    description: " The Entlebucher Sennenhund or Entlebucher Mountain Dog is a medium-sized herding dog, it is the smallest of the four regional breeds that constitute the Sennenhund dog type. The name Sennenhund refers to people called Senn, herders in the Swiss Alps. Entlebuch is a region in the canton of Lucerne in Switzerland. ",
+link: "https://en.wikipedia.org/wiki/Entlebucher_Mountain_Dog"
+},
+{
+dog_name: " Appenzeller ",
+    description: " The Appenzeller Sennenhund is a Swiss breed of medium-sized working dog. It originates in the Appenzell region of north-eastern Switzerland, and is one of four regional breeds of Sennenhund or Swiss mountain dog, all of which are characterised by a distinctive tricolour coat.",
+link: "https://en.wikipedia.org/wiki/Appenzeller_Sennenhund "
+},
+{
+dog_name: " Briard ",
+    description: " The Briard or Berger de Brie is a French breed of large shepherd dog, traditionally used both for herding sheep and to defend them. It was first shown at the first Paris dog show, in 1863; the first Briard to be registered in the Livre des Origines Françaises, the national stud-book, was Sans Gêne in 1885. ",
+link: "https://en.wikipedia.org/wiki/Briard"
+},
+{
+dog_name: "  German_short-haired_pointer ",
+    description: " The German Shorthaired Pointer is a breed of medium-sized pointing dog developed in nineteenth century Germany.It is an all-purpose gun dog suitable for hunting and retrieving on both land and water. It may also be kept as a companion dog. The German Shorthaired Pointer is a member of the Sporting Group. ",
+link: "https://en.wikipedia.org/wiki/German_Shorthaired_Pointer "
+},
+{
+dog_name: " Boston_bull ",
+    description: " The English Boston-Bulldog dog breed is a small to medium-sized lovable friendly dog that sports a solid stout body. A combination of traits from both the Boston Terrier and the English Bulldog parents results in a hybrid dog breed that is devoted to family, and a committed family member. They can be sensitive and don’t like being ignored or left alone too long. This hybrid dog breed enjoys chilling out with the owner and family, although they gladly join in a game of fetch the ball. They can suffer from exposure to extreme heat which can cause heatstroke, and they don’t like the severe cold. The English Boston-Bulldog is lively as a puppy, but slows down with age. "
+,
+link: "https://wagwalking.com/breed/english-boston-bulldog"
+},
+{
+dog_name: "  English_setter ",
+    description: " The English Setter is a medium-size breed of dog. It is part of the setter group, which includes the red Irish Setters, Irish Red and White Setters, and black-and-tan Gordon Setters. The mainly white coath as long silky fringes on the back of the legs, under the belly and on the tail.",
+link: "https://en.wikipedia.org/wiki/English_Setter "
+},
+{
+dog_name: "  Bouvier_des_Flandres ",
+    description: " The Bouvier des Flandres is a herding dog breed originating in Flanders, Belgium. They were originally used for general farm work including cattle droving, sheep herding, and cart pulling, and nowadays as guard dogs and police dogs, as well as being kept as pets. ",
+link: "https://en.wikipedia.org/wiki/Bouvier_des_Flandres"
+},
+{
+dog_name: "  Sussex_spaniel ",
+    description: " The Sussex Spaniel is a breed of dog native to Sussex in southern England. It is a low, compact spaniel and is as old a breed as and similar in appearance to the Clumber Spaniel. They can be slow-paced, but can have a clownish and energetic temperament.",
+link: "https://en.wikipedia.org/wiki/Sussex_Spaniel "
+},
+{
+dog_name: " Brittany_spaniel ",
+    description: " The Brittany Spaniel, French: Épagneul Breton, is a French breed of gun dog of spaniel type, bred primarily for bird hunting. It developed between the seventeenth and nineteenth centuries in Brittany in north-west France, and was officially recognized early in the twentieth. ",
+link: "https://en.wikipedia.org/wiki/Brittany_(dog)"
+},
+{
+dog_name: " Bloodhound ",
+    description: " The bloodhound is a large scent hound, originally bred for hunting deer, wild boar, rabbits, and since the Middle Ages, for tracking people. Believed to be descended from hounds once kept at the Abbey of Saint-Hubert, Belgium, in French it is called, le chien de Saint-Hubert.",
+link: "https://en.wikipedia.org/wiki/Bloodhound "
+},
+{
+dog_name: " Bedlington_terrier ",
+    description: " The Bedlington Terrier is a breed of small dog named after the mining town of Bedlington, Northumberland in North East England. Originally bred to hunt, the Bedlington Terrier has since been used in dog racing, numerous dog sports, as well as in conformation shows and as a companion dog. ",
+link: "https://en.wikipedia.org/wiki/Bedlington_Terrier"
+},
+
+{
+dog_name: "  Dandie_Dinmont ",
+    description: " A Dandie Dinmont Terrier is a small Scottish dog breed in the terrier family. The breed has a very long body, short legs, and a distinctive topknot of hair on the head. They are friendly but tough, and are suitable for interaction with older children .",
+link: "https://en.wikipedia.org/wiki/Dandie_Dinmont_Terrier "
+},
+{
+dog_name: " English_springer ",
+    description: " The English Springer Spaniel is a breed of gun dog in the Spaniel group traditionally used for flushing and retrieving game. They are descended from the Norfolk or Shropshire Spaniels of the mid-19th century; the breed has diverged into separate show and working lines. ",
+link: "https://en.wikipedia.org/wiki/English_Springer_Spaniel"
+},
+{
+dog_name: " Greater_Swiss_Mountain_dog ",
+    description: " The Greater Swiss Mountain Dog is a dog breed which was developed in the Swiss Alps. The name Sennenhund refers to people called Senn or Senner, dairymen and herders in the Swiss Alps.",
+link: "https://en.wikipedia.org/wiki/Greater_Swiss_Mountain_Dog "
+},
+{
+dog_name: "  English Fox Hound ",
+    description: " The English Foxhound is one of the four foxhound breeds of dog. It is a cousin of the American Foxhound. They are scent hounds, bred to hunt foxes by scent.  ",
+link: "https://en.wikipedia.org/wiki/English_Foxhound"
+},
+{
+dog_name: "  Soft-coated_wheaten_terrier ",
+    description: " The soft-coated Wheaten Terrier is a pure-breed terrier originating from Ireland. Wheatens typically have one of two coat types: Irish or Heavy. The Irish coat is generally silkier and wavier than the Heavy, or American coat, which is thicker and fuller.",
+link: "https://en.wikipedia.org/wiki/Soft-coated_Wheaten_Terrier "
+},
+{
+dog_name: "  Walker Hound ",
+    description: " The Treeing Walker Coonhound is a breed of hound descended from the English and American Foxhounds. The breed originated in the United States when a stolen dog known as 'Tennessee Lead' was crossed into the Walker Hound in the 19th century. ",
+link: "https://en.wikipedia.org/wiki/Treeing_Walker_Coonhound"
+},
+{
+dog_name: " Affenpinscher ",
+    description: " The Affenpinscher is a German breed of small toy dog of Pinscher type. Originally developed as a mouser, the Affenpinscher is now commonly found as a companion worldwide.",
+link: "https://en.wikipedia.org/wiki/Affenpinscher "
+},
+{
+dog_name: "  Japanese Spaniel ",
+    description: " The Japanese Chin, also known as the Japanese Spaniel, is a toy dog breed, being both a lap dog and a companion dog, with a distinctive heritage. ",
+link: "https://en.wikipedia.org/wiki/Japanese_Chin"
+},
+{
+dog_name: " Pekinese ",
+    description: " The Pekingese is a breed of toy dog, originating in China. The breed was favored by royalty of the Chinese Imperial court as a companion dog, and its name refers to the city of Beijing where the Forbidden City is located. The breed has several characteristics and health issues related to its unique appearance.",
+link: "https://en.wikipedia.org/wiki/Pekingese "
+},
+{
+dog_name: " Maltese Dog  ",
+    description: " Maltese dog refers both to an ancient variety of dwarf, white-coated dog breed from Italy and generally associated also with the island of Malta, and to a modern breed of similar dogs in the toy group, genetically related to the Bichon, Bolognese, and Havanese breeds. ",
+link: "https://en.wikipedia.org/wiki/Maltese_dog"
+},
+{
+dog_name: " Shih-Tzu ",
+description: " The Shih Tzu is a toy dog or pet dog breed originating from Tibet and believed to be bred from the Pekingese and the Lhasa Apso. They can adapt well to different situations. Due to their highly independent nature, they are not considered as a very obedient breed.",
+link: "https://en.wikipedia.org/wiki/Shih_Tzu "
+},
+{
+dog_name: " Blenheim_spaniel ",
+description: " The King Charles Spaniel is a small dog breed of the spaniel type. In 1903, the Kennel Club combined four separate toy spaniel breeds under this single title.",
+link: "https://en.wikipedia.org/wiki/King_Charles_Spaniel"
+},
+{
+dog_name: " Basset ",
+description: " The Basset Hound is a short-legged breed of dog in the hound family. The Basset is a scent hound that was originally bred for the purpose of hunting hare. Their sense of smell and ability to ground-scent is second only to the Bloodhound. Basset Hounds are one of six recognized 'basset'-type breeds in France." ,
+link: "https://en.wikipedia.org/wiki/Basset_Hound"
+},
+{
+dog_name: "  Sealyham_terrier ",
+description: " The Sealyham Terrier is a rare Welsh breed of small to medium-sized terrier that originated in Wales as a working dog. It is principally a white-bodied, rough-coated breed, developed in the mid-to-late-19th century by Captain John Edwardes at Sealyham House, Pembrokeshire. ",
+link: "https://en.wikipedia.org/wiki/Sealyham_Terrier"
+},
+{
+dog_name: " Tibetan_terrier ",
+description: " The Tibetan Terrier is a medium-sized breed of dog that originated in Tibet. Despite its name, it is not a member of the terrier group. The breed was given its English name by European travelers due to its resemblance to known terrier breeds.",
+link: "https://en.wikipedia.org/wiki/Tibetan_Terrier "
+},
+{
+dog_name: " Lhasa",
+description: " The Lhasa Apso is a non-sporting dog breed originating in Tibet. Traditionally the breed has been used as an interior watchdog.  ",
+link: "https://en.wikipedia.org/wiki/Lhasa_Apso"
+},
+{
+dog_name: " Welsh_springer_spaniel  ",
+description: " The Welsh Springer Spaniel is a breed of dog and a member of the spaniel family. Thought to be comparable to the old Land Spaniel, they are similar to the English Springer Spaniel and historically have been referred to as both the Welsh Spaniel and the Welsh Cocker Spaniel.",
+link: "https://en.wikipedia.org/wiki/Welsh_Springer_Spaniel "
+},
+{
+dog_name: "  Old_English_sheepdog ",
+    description: " The Old English Sheepdog is a large breed of dog that emerged in England from early types of herding dog. Obsolete names for the breed include Shepherd's Dog and bob-tailed sheep-dog. The nickname Bob-tail originates from how dogs of the breed traditionally had their tails docked. ",
+link: "https://en.wikipedia.org/wiki/Old_English_Sheepdog"
+},
+{
+dog_name: " Bernese_mountain_dog ",
+    description: " The Bernese Mountain Dog is a large dog breed from Bern, Switzerland and the Swiss Alps, being one of the four breeds of Sennenhund-type dogs, with roots in the Roman mastiffs.",
+link: "https://en.wikipedia.org/wiki/Bernese_Mountain_Dog "
+},
+{
+dog_name: "  Saint_Bernard ",
+    description: " The St. Bernard or Saint Bernard is a breed of very large working dog from the Western Alps in Italy and Switzerland. They were originally bred for rescue work by the hospice of the Great St Bernard Pass on the Italian-Swiss border. ",
+link: "https://en.wikipedia.org/wiki/St._Bernard_(dog_breed)"
+},
+{
+dog_name: " Toy_Poodle ",
+    description: " The Toy Poodle is one of the smartest dog breeds—as well as one of the most entertaining. Although she stands no more than 10 inches tall and weighs between 4–6 pounds, the Toy Poodle has a big, playful personality that can fill up a room." ,
+link: "https://www.petmd.com/dog/breeds/toy-poodle"
+},
+]; 
+    
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        document.getElementById("drop-image-text").innerHTML = "Please Wait...";
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        labelContainer = document.getElementById("result-table");
+
+        for (let i = 0; i < maxPredictions; i++) {
+            labelContainer.appendChild(document.createElement("tr"));
+        }
+    }
+
+    async function loadImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+            if (allowedTypes.includes(file.type)) {
+                await init();
+                const imgUrl = await readFileAsDataURL(file);
+                document.getElementById("svg").style.display = "none";
+                document.getElementById("selected-image").innerHTML = `<img src="${imgUrl}" alt="Uploaded Image" />`;
+                await predict(imgUrl);
+                document.getElementById("drop-image-text").innerHTML = "Searching...";
+            } else {
+                alert("Please upload an image file.");
+            }
+        }
+    }
+
+    async function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                resolve(event.target.result);
+            };
+            reader.onerror = (error) => {
+                reject(error);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function predict(imgUrl) {
+        const img = new Image();
+        img.onload = async function () {
+            const prediction = await model.predict(img);
+            prediction.sort((a, b) => {
+                return b.probability - a.probability;
+            });
+dogBreeds.map((item)=>{
+    // console.log(prediction[0].className.toLowerCase(),(item.dog_name.toLowerCase()))
+    if(prediction[0].className.trim().toLowerCase().includes(item.dog_name.trim().toLowerCase())){
+        document.getElementById("dog-description").innerHTML=item.description
+        let a= document.createElement('a')
+        a.href=item.link.trim()
+        a.innerText="Read More"
+        a.class="back"
+        a.style.color='blue'
+        document.getElementById("dog-description").appendChild(a)
+
+        return
+    }
+})
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction = `<td>${prediction[i].className}</td> <td>${prediction[i].probability.toFixed(2)}</td>`;
+                document.getElementById("drop-image-text").innerHTML = "Success!";
+                document.getElementById("svg").style.display = "none";
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+                
+            }
+        };
+        img.src = imgUrl;
+    }
+
+    function resetInput() {
+        document.getElementById('image-upload').value = '';
+        document.getElementById('drop-image-text').innerHTML = 'Upload image here';
+        document.getElementById('selected-image').innerHTML = '';
+        document.getElementById('result-table').innerHTML = '';
+        document.querySelector('.reset-button').style.display = 'none';
+        document.getElementById("svg").style.display = "block";
+    }
+</script>
+<div class="link">
+    <a href="Index.html" class="back">Get BACK</a>
+    </div>
+</div>
+</body>
+</html>
